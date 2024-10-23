@@ -26,8 +26,30 @@ type tistruct struct {
 	Value int    `diff:"value"`
 }
 
+// tnistruct nested identifiable
+type tnistruct struct {
+	Name   string     `diff:"name,identifier"`
+	Nested []tistruct `diff:"nested"`
+}
+
+// tnipstruct nested identifiable parent
+type tnipstruct struct {
+	Nested []tnistruct `diff:"nested"`
+}
+
 type tuistruct struct {
 	Value int `diff:"value"`
+}
+
+// tnuistruct nested unidentifiable
+type tnuistruct struct {
+	Name   string      `diff:"name"`
+	Nested []tuistruct `diff:"nested"`
+}
+
+// tnuipstruct nested unidentifiable parent
+type tnuipstruct struct {
+	Nested []tnuistruct `diff:"nested"`
 }
 
 type tnstruct struct {
@@ -465,6 +487,17 @@ func TestDiff(t *testing.T) {
 			nil,
 		},
 		{
+			"struct-identifiable-nested-slice-insert", tnipstruct{Nested: []tnistruct{{Name: "parent_one", Nested: []tistruct{{"one", 1}}}}}, tnipstruct{Nested: []tnistruct{{Name: "parent_one", Nested: []tistruct{{"one", 1}, {"two", 2}}}, {Name: "parent_two", Nested: []tistruct{{"three", 3}}}}},
+			diff.Changelog{
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "parent_one", "nested", "two", "name"}, From: nil, To: "two"},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "parent_one", "nested", "two", "value"}, From: nil, To: 2},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "parent_two", "name"}, From: nil, To: "parent_two"},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "parent_two", "nested", "three", "name"}, From: nil, To: "three"},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "parent_two", "nested", "three", "value"}, From: nil, To: 3},
+			},
+			nil,
+		},
+		{
 			"struct-generic-slice-delete", tstruct{Values: []string{"one", "two"}}, tstruct{Values: []string{"one"}},
 			diff.Changelog{
 				diff.Change{Type: diff.DELETE, Path: []string{"values", "1"}, From: "two", To: nil},
@@ -715,6 +748,17 @@ func TestDiffSliceOrdering(t *testing.T) {
 			diff.Changelog{
 				diff.Change{Type: diff.UPDATE, Path: []string{"a", "1"}, From: 2, To: 3},
 				diff.Change{Type: diff.DELETE, Path: []string{"a", "2"}, From: 3},
+			},
+			nil,
+		},
+		{
+			"struct-nested-slice-reorder", tnuipstruct{Nested: []tnuistruct{{Name: "parent_one", Nested: []tuistruct{{Value: 1}}}}}, tnuipstruct{Nested: []tnuistruct{{Name: "parent_two", Nested: []tuistruct{{Value: 3}}}, {Name: "parent_one", Nested: []tuistruct{{Value: 2}, {Value: 1}}}}},
+			diff.Changelog{
+				diff.Change{Type: diff.UPDATE, Path: []string{"nested", "0", "name"}, From: "parent_one", To: "parent_two"},
+				diff.Change{Type: diff.UPDATE, Path: []string{"nested", "0", "nested", "0", "value"}, From: 1, To: 3},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "1", "name"}, From: nil, To: "parent_one"},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "1", "nested", "0", "value"}, From: nil, To: 2},
+				diff.Change{Type: diff.CREATE, Path: []string{"nested", "1", "nested", "1", "value"}, From: nil, To: 1},
 			},
 			nil,
 		},
