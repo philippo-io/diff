@@ -5,11 +5,11 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/r3labs/diff/v3"
+	"github.com/philippo-io/diff/v3"
 )
 
-//Try to do a bunch of stuff that will result in some or all failures
-//when trying to apply either a valid or invalid changelog
+// Try to do a bunch of stuff that will result in some or all failures
+// when trying to apply either a valid or invalid changelog
 func ExamplePatchWithErrors() {
 
 	type Fruit struct {
@@ -109,7 +109,7 @@ func ExamplePatchWithErrors() {
 	//Output:
 }
 
-//ExampleMerge demonstrates how to use the Merge function
+// ExampleMerge demonstrates how to use the Merge function
 func ExampleMerge() {
 	type Fruit struct {
 		ID        int            `diff:"ID" json:"Identifier"`
@@ -169,7 +169,7 @@ func ExampleMerge() {
 	//Output: 8
 }
 
-//ExamplePrimitiveSlice demonstrates working with arrays and primitive values
+// ExamplePrimitiveSlice demonstrates working with arrays and primitive values
 func ExamplePrimitiveSlice() {
 	sla := []string{
 		"this",
@@ -238,22 +238,23 @@ func ExamplePrimitiveSlice() {
 	//Output: 5 changes made to string array; [simple a]
 }
 
-//ExampleComplexMapPatch demonstrates how to use the Patch function for complex slices
-//NOTE: There is a potential pitfall here, take a close look at b[2]. If patching the
-//      original, the operation will work intuitively however, in a merge situation we
-//      may not get everything we expect because it's a true diff between a and b and
-//      the diff log will not contain enough information to fully recreate b from an
-//      empty slice. This is exemplified in that the test "colors" is dropped in element
-//      3 of c. Change "colors" to "color" and see what happens. Keep in mind this only
-//      happens when we need to allocate a new complex element. In normal operations we
-//      fix for this by keeping a copy of said element in the diff log (as parent) and
-//      allocate such an element as a whole copy prior to applying any updates?
+// ExampleComplexMapPatch demonstrates how to use the Patch function for complex slices
+// NOTE: There is a potential pitfall here, take a close look at b[2]. If patching the
 //
-//      The new default is to carry this information forward, we invoke this pitfall
-//      by creating such a situation and explicitly telling diff to discard the parent
-//      In memory constrained environments if the developer is careful, they can use
-//      the discard feature but unless you REALLY understand what's happening here, use
-//      the default.
+//	original, the operation will work intuitively however, in a merge situation we
+//	may not get everything we expect because it's a true diff between a and b and
+//	the diff log will not contain enough information to fully recreate b from an
+//	empty slice. This is exemplified in that the test "colors" is dropped in element
+//	3 of c. Change "colors" to "color" and see what happens. Keep in mind this only
+//	happens when we need to allocate a new complex element. In normal operations we
+//	fix for this by keeping a copy of said element in the diff log (as parent) and
+//	allocate such an element as a whole copy prior to applying any updates?
+//
+//	The new default is to carry this information forward, we invoke this pitfall
+//	by creating such a situation and explicitly telling diff to discard the parent
+//	In memory constrained environments if the developer is careful, they can use
+//	the discard feature but unless you REALLY understand what's happening here, use
+//	the default.
 func ExampleComplexSlicePatch() {
 
 	type Content struct {
@@ -315,7 +316,7 @@ func ExampleComplexSlicePatch() {
 	//Output: Patched 7 entries and encountered 3 errors
 }
 
-//ExampleComplexMapPatch demonstrates how to use the Patch function for complex slices.
+// ExampleComplexMapPatch demonstrates how to use the Patch function for complex slices.
 func ExampleComplexMapPatch() {
 
 	type Key struct {
@@ -380,7 +381,7 @@ func ExampleComplexMapPatch() {
 	//Output: 7
 }
 
-//ExamplePatch demonstrates how to use the Patch function
+// ExamplePatch demonstrates how to use the Patch function
 func ExamplePatch() {
 
 	type Key struct {
