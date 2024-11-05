@@ -39,13 +39,13 @@ func (d *Differ) diffPtr(path []string, a, b reflect.Value, parent interface{}) 
 	}
 
 	if a.IsNil() {
-		d.cl.Add(UPDATE, path, nil, exportInterface(b), parent)
-		return nil
+		return d.diff(path, reflect.ValueOf(nil), reflect.Indirect(b), parent)
+		//d.cl.Add(UPDATE, path, nil, exportInterface(b), parent)
 	}
 
 	if b.IsNil() {
-		d.cl.Add(UPDATE, path, exportInterface(a), nil, parent)
-		return nil
+		return d.diff(path, reflect.Indirect(a), reflect.ValueOf(nil), parent)
+		//d.cl.Add(UPDATE, path, exportInterface(a), nil, parent)
 	}
 
 	return d.diff(path, reflect.Indirect(a), reflect.Indirect(b), parent)
