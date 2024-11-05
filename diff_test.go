@@ -85,6 +85,10 @@ type privateMapStruct struct {
 	set map[string]interface{}
 }
 
+type pointerNestedStruct struct {
+	Pointer *tstruct `diff:"pointer"`
+}
+
 type CustomStringType string
 type CustomIntType int
 type customTypeStruct struct {
@@ -467,7 +471,28 @@ func TestDiff(t *testing.T) {
 		{
 			"struct-nil-string-pointer-update", tstruct{Pointer: nil}, tstruct{Pointer: sptr("test")},
 			diff.Changelog{
-				diff.Change{Type: diff.UPDATE, Path: []string{"pointer"}, From: nil, To: sptr("test")},
+				diff.Change{Type: diff.CREATE, Path: []string{"pointer"}, From: nil, To: "test"},
+			},
+			nil,
+		},
+		{
+			"struct-nil-nested-struct-pointer-create", nil, pointerNestedStruct{Pointer: &tstruct{ID: "id.test"}},
+			diff.Changelog{
+				diff.Change{Type: diff.CREATE, Path: []string{"pointer", "id"}, From: nil, To: "id.test"},
+			},
+			nil,
+		},
+		{
+			"struct-nil-nested-struct-pointer-delete", pointerNestedStruct{Pointer: &tstruct{ID: "id.test"}}, nil,
+			diff.Changelog{
+				diff.Change{Type: diff.DELETE, Path: []string{"pointer", "id"}, From: "id.test", To: nil},
+			},
+			nil,
+		},
+		{
+			"struct-nested-struct-pointer-update", pointerNestedStruct{Pointer: &tstruct{Name: "name.test"}}, pointerNestedStruct{Pointer: &tstruct{Name: "name.test2"}},
+			diff.Changelog{
+				diff.Change{Type: diff.UPDATE, Path: []string{"pointer", "name"}, From: "name.test", To: "name.test2"},
 			},
 			nil,
 		},

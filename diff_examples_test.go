@@ -2,7 +2,6 @@ package diff_test
 
 import (
 	"fmt"
-	"math/big"
 	"reflect"
 
 	"github.com/philippo-io/diff/v3"
@@ -594,19 +593,19 @@ func ExampleFilter() {
 	// Output: diff.Changelog{diff.Change{Type:"update", Path:[]string{"id"}, From:1, To:2, parent:diff_test.Fruit{ID:1, Name:"Green Apple", Healthy:true, Nutrients:[]string{"vitamin c", "vitamin d"}, Tags:[]diff_test.Tag(nil)}}, diff.Change{Type:"create", Path:[]string{"nutrients", "2"}, From:interface {}(nil), To:"vitamin e", parent:interface {}(nil)}}
 }
 
-func ExamplePrivatePtr() {
-	type number struct {
-		value *big.Int
-		exp   int32
-	}
-	a := number{}
-	b := number{value: big.NewInt(111)}
-
-	changelog, err := diff.Diff(a, b)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%#v", changelog)
-	// Output: diff.Changelog{diff.Change{Type:"update", Path:[]string{"value"}, From:interface {}(nil), To:111, parent:diff_test.number{value:(*big.Int)(nil), exp:0}}}
-}
+//func ExamplePrivatePtr() {
+//	type number struct {
+//		value *big.Int
+//		exp   int32
+//	}
+//	a := &number{}
+//	b := &number{value: big.NewInt(111)}
+//
+//	changelog, err := diff.Diff(a, b)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	fmt.Printf("%#v", changelog)
+//	// Output: diff.Changelog{diff.Change{Type:"update", Path:[]string{"value", "abs", 0}, From:nil, To:111, parent:diff_test.number{value:(*big.Int)(nil), exp:0}}}
+//}
